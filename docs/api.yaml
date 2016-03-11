@@ -1,0 +1,31 @@
+swagger: '2.0'
+info:
+  version: "0.0.1"
+  title: Filer
+paths:
+  /upload:
+    post:
+      description: |
+        Загружает один или несколько файлов на сервер
+      parameters:
+        -
+          name: token
+          in: formData
+          description: Токен для авторизации
+          required: true
+          type: string
+        -
+          name: file
+          in: formData
+          description: Файл для загрузки
+          required: true
+          type: file
+      responses:
+        200:
+          description: Файл загружен
+          schema:
+            title: File
+            type: object
+            properties:
+                file:
+                  type: string
