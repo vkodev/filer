@@ -229,6 +229,30 @@ paths:
           description: При возникновении ошибки
           schema:
             $ref: '#/definitions/Error'
+  /{uuid}/{operations}:
+    get:
+      tags:
+        - file api
+      description: Отадает файл
+      parameters:
+        - name: uuid
+          in: path
+          required: true
+          type: string
+        - name: operations
+          in: path
+          description: |
+            Одна или более возможных операций над файлом
+
+            Возможные операции доступные только для изображений:
+
+              * /:uuid/-/format/:format - Конвертирует оригинальное изображение в указанный формат
+              * /:uuid/-/resize/:one_or_two_dimensions - Изменяет оригинальные размеры изображения на указанные
+          type: string
+      responses:
+        200:
+          schema:
+            type: file
 definitions:
   Error:
     type: object
