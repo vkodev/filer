@@ -2,6 +2,7 @@ swagger: '2.0'
 info:
   version: "0.0.1"
   title: Filer
+  description: Микросервис для хранения и изменения файлов
 paths:
   /upload:
     post:
@@ -78,7 +79,7 @@ paths:
   /files:
     get:
       tags:
-        - resp api
+        - rest api
       description: Возвращает список файлов
       parameters:
         - name: stored
@@ -129,7 +130,105 @@ paths:
           description: При возникновении ошибки
           schema:
             $ref: '#/definitions/Error'
-
+    put:
+      tags:
+        - rest api
+      description: Сохраняет список указанных файлов на постоянное хранение
+      parameters:
+        - in: body
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        200:
+          description: Список измененных файлов файлов
+          schema:
+            title: Список файлов
+            type: array
+            items:
+              $ref: '#/definitions/FileModel'
+        default:
+          description: При возникновении ошибки
+          schema:
+            $ref: '#/definitions/Error'
+    delete:
+      tags:
+        - rest api
+      description: Удаляет список указанных файлов
+      parameters:
+        - in: body
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        200:
+          description: Список измененных файлов файлов
+          schema:
+            title: Список файлов
+            type: array
+            items:
+              $ref: '#/definitions/FileModel'
+        default:
+          description: При возникновении ошибки
+          schema:
+            $ref: '#/definitions/Error'
+  /files/{uuid}:
+    get:
+      tags:
+        - rest api
+      description: Возвращает файл по его uuid
+      parameters:
+        - name: uuid
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: Метаданные файла
+          schema:
+            $ref: '#/definitions/FileModel'
+        default:
+          description: При возникновении ошибки
+          schema:
+            $ref: '#/definitions/Error'
+    put:
+      tags:
+        - rest api
+      description: Сохраняет файл на постоянное хранение
+      parameters:
+        - name: uuid
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: Метаданные файла
+          schema:
+            $ref: '#/definitions/FileModel'
+        default:
+          description: При возникновении ошибки
+          schema:
+            $ref: '#/definitions/Error'
+    delete:
+      tags:
+        - rest api
+      description: Удаляет файл по указанному uuid
+      parameters:
+        - name: uuid
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: Метаданные файла
+          schema:
+            $ref: '#/definitions/FileModel'
+        default:
+          description: При возникновении ошибки
+          schema:
+            $ref: '#/definitions/Error'
 definitions:
   Error:
     type: object
