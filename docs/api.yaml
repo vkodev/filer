@@ -2,9 +2,12 @@ swagger: '2.0'
 info:
   version: "0.0.1"
   title: Filer
+  description: Микросервис для хранения и изменения файлов
 paths:
   /upload:
     post:
+      tags:
+        - upload api
       description: |
         Загружает один или несколько файлов на сервер
       parameters:
@@ -20,12 +23,291 @@ paths:
           description: Файл для загрузки
           required: true
           type: file
+        - name: store
+          in: formData
+          description: Если 1, то хранить файл постоянно, иначе удалить через 24 часа
+          type: integer
+        - name: filename
+          in: formData
+          description: Имя файла
+          type: string
       responses:
         200:
           description: Файл загружен
           schema:
             title: File
-            type: object
-            properties:
-                file:
-                  type: string
+            $ref: '#/definitions/FileUuid'
+
+        default:
+          description: При возникновении ошибки
+          schema:
+            $ref: '#/definitions/Error'
+  /upload_url:
+    get:
+      tags:
+        - upload api
+      description: Загружает файл по переданному Url
+      parameters:
+        - name: token
+          in: query
+          description: Токен для авторизации
+          required: true
+          type: string
+        - name: url
+          in: query
+          description: Url загружаемого файла
+          required: true
+          type: string
+        - name: store
+          in: query
+          description: Если 1, то хранить файл постоянно, иначе удалить через 24 часа
+          type: integer
+        - name: filename
+          in: query
+          description: Имя файла
+          type: string
+      responses:
+        200:
+          description: Файл загружен
+          schema:
+            title: File
+            $ref: '#/definitions/FileUuid'
+        default:
+            description: При возникновении ошибки
+            schema:
+              $ref: '#/definitions/Error'
+  /files:
+    get:
+      tags:
+        - rest api
+      description: Возвращает список файлов
+      parameters:
+        - name: stored
+          in: query
+          description: |
+            Если true, то вернет только постоянно хранящиеся файлы
+            Если false, то только временно хранящиеся
+            по умолчанию значение не установлено, и будут возвращены все файлы
+          type: boolean
+        - name: removed
+          in: query
+          descripton: |
+            Если true, то вернуть только удаленные файлы,
+            Если false, то исключить удаленные файлы
+            по уполчанию false
+          type: boolean
+        - name: limit
+          in: query
+          description: Количество возвращаемых файлов за один запрос, по умолчанию 100
+          type: integer
+        - name: offset
+          in: query
+          description: Смещение от начала, по умолчанию 0
+          type: integer
+        - name: ordering
+          description: |
+            Определяет способ сортировки результатов
+
+            Опции:
+
+              * datetime_uploaded - по времени загрузки
+              * -datetime_uploaded - по времени загрузки в обратном порядке
+              * size - по размеру
+              * -size - по размеру, в обратном порядке
+
+            По умолчанию datetime_uploaded
+          type: string
+      responses:
+        200:
+          description: Список файлов
+          schema:
+            title: Список файлов
+            type: array
+            items:
+              $ref: '#/definitions/FileModel'
+
+        default:
+          description: При возникновении ошибки
+          schema:
+            $ref: '#/definitions/Error'
+    put:
+      tags:
+        - rest api
+      description: Сохраняет список указанных файлов на постоянное хранение
+      parameters:
+        - in: body
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        200:
+          description: Список измененных файлов файлов
+          schema:
+            title: Список файлов
+            type: array
+            items:
+              $ref: '#/definitions/FileModel'
+        default:
+          description: При возникновении ошибки
+          schema:
+            $ref: '#/definitions/Error'
+    delete:
+      tags:
+        - rest api
+      description: Удаляет список указанных файлов
+      parameters:
+        - in: body
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        200:
+          description: Список измененных файлов файлов
+          schema:
+            title: Список файлов
+            type: array
+            items:
+              $ref: '#/definitions/FileModel'
+        default:
+          description: При возникновении ошибки
+          schema:
+            $ref: '#/definitions/Error'
+  /files/{uuid}:
+    get:
+      tags:
+        - rest api
+      description: Возвращает файл по его uuid
+      parameters:
+        - name: uuid
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: Метаданные файла
+          schema:
+            $ref: '#/definitions/FileModel'
+        default:
+          description: При возникновении ошибки
+          schema:
+            $ref: '#/definitions/Error'
+    put:
+      tags:
+        - rest api
+      description: Сохраняет файл на постоянное хранение
+      parameters:
+        - name: uuid
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: Метаданные файла
+          schema:
+            $ref: '#/definitions/FileModel'
+        default:
+          description: При возникновении ошибки
+          schema:
+            $ref: '#/definitions/Error'
+    delete:
+      tags:
+        - rest api
+      description: Удаляет файл по указанному uuid
+      parameters:
+        - name: uuid
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: Метаданные файла
+          schema:
+            $ref: '#/definitions/FileModel'
+        default:
+          description: При возникновении ошибки
+          schema:
+            $ref: '#/definitions/Error'
+  /{uuid}/{operations}:
+    get:
+      tags:
+        - file api
+      description: Отадает файл
+      parameters:
+        - name: uuid
+          in: path
+          required: true
+          type: string
+        - name: operations
+          in: path
+          description: |
+            Одна или более возможных операций над файлом
+
+            Возможные операции доступные только для изображений:
+
+              * /:uuid/-/format/:format - Конвертирует оригинальное изображение в указанный формат
+              * /:uuid/-/resize/:one_or_two_dimensions - Изменяет оригинальные размеры изображения на указанные
+          type: string
+      responses:
+        200:
+          schema:
+            type: file
+definitions:
+  Error:
+    type: object
+    properties:
+      code:
+        type: integer
+        default: 500
+      message:
+        type: string
+        default: Internal server error
+  FileUuid:
+    type: object
+    properties:
+      file:
+        type: string
+  FileModel:
+    type: object
+    properties:
+      uuid:
+        type: string
+      original_filename:
+        type: string
+      original_file_url:
+        type: string
+      mime_type:
+        type: string
+      datetime_uploaded:
+        type: string
+        format: date-time
+      datetime_stored:
+        type: string
+        format: date-time
+      datetime_deleteded:
+        type: string
+        format: date-time
+      is_image:
+        type: boolean
+      is_ready:
+        type: boolean
+      size:
+        type: integer
+      url:
+        type: string
+      image_info:
+        type: object
+        properties:
+          width:
+            type: integer
+          height:
+            type: integer
+          datetime_original:
+            type: string
+            format: date-time
+          format:
+            type: string
+          geo_location:
+            type: string
+
