@@ -1,1 +1,4 @@
 .idea/
+storage/
+filer
+Godeps/_workspace
