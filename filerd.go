@@ -4,6 +4,7 @@ import (
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/engine/standard"
 	"github.com/labstack/echo/middleware"
+	"filer/rest-api"
 )
 
 type versionType struct {
@@ -27,6 +28,7 @@ func main() {
 	e.Use(middleware.Recover())
 
 	e.Get("/", version())
-	e.Post("/upload", uploadFile())
+	//e.Post("/upload", uploadFile()) //TODO need fix, cause server don't start with this handler
+	e.Post("/auth", rest_api.HandleAuth())
 	e.Run(standard.New(":1234"))
 }
