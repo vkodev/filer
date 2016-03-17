@@ -4,6 +4,9 @@ import (
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/engine/standard"
 	"github.com/labstack/echo/middleware"
+	"database/sql"
+	_ "github.com/mattn/go-sqlite3"
+"log"
 )
 
 type versionType struct {
@@ -20,13 +23,25 @@ func version() echo.HandlerFunc {
 	}
 }
 
+
+
 func main() {
+	db, err := sql.Open("sqlite3", "./storage.db")
+	if err!=nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
+
+	metadata := MakeSqliteMetadata(db)
+	storage := MakeLocalStorage("")
+	repository := MakeNewFileRepository(storage, metadata)
+
 	e := echo.New()
 	e.SetDebug(true)
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 
 	e.Get("/", version())
-	e.Post("/upload", uploadFile())
+	e.Post("/upload", uploadFile(repository))
 	e.Run(standard.New(":1234"))
 }
