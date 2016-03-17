@@ -1,6 +1,7 @@
-package main
+package local
 
 import (
+	"github.com/vkodev/filer/common"
 	"io"
 	"os"
 	"path/filepath"
@@ -22,8 +23,8 @@ func MakeLocalStorage(root string) *LocalStorage {
 }
 
 // Put tries to put the file to the filesystem
-func (s *LocalStorage) Write(f io.ReadCloser, file *File) error {
-	file.provider = s.Name
+func (s *LocalStorage) Write(f io.ReadCloser, file *common.File) error {
+	//file.provider = s.Name
 	path := makePath(s.Root, file.UUID, file.Ext())
 	if err := os.MkdirAll(filepath.Dir(path), 0777); err != nil {
 		return err
@@ -33,7 +34,7 @@ func (s *LocalStorage) Write(f io.ReadCloser, file *File) error {
 		return err
 	}
 	defer dst.Close()
-	file.path = path
+	//file.path = path
 	// Copy
 	if _, err = io.Copy(dst, f); err != nil {
 		return err
@@ -42,17 +43,17 @@ func (s *LocalStorage) Write(f io.ReadCloser, file *File) error {
 }
 
 //Read returns a file reader interface
-func (s *LocalStorage) Read(file *File) (io.ReadCloser, error) {
+func (s *LocalStorage) Read(file *common.File) (io.ReadCloser, error) {
 	return nil, nil
 }
 
 //Remove tries to remove the file from the fs
-func (s *LocalStorage) Remove(file *File) error {
+func (s *LocalStorage) Remove(file *common.File) error {
 	return nil
 }
 
 //URL returns an url to the file
-func (s *LocalStorage) URL(file *File) (string, error) {
+func (s *LocalStorage) URL(file *common.File) (string, error) {
 	return "", nil
 }
 

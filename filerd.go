@@ -6,6 +6,9 @@ import (
 	"github.com/labstack/echo/engine/standard"
 	"github.com/labstack/echo/middleware"
 	_ "github.com/mattn/go-sqlite3"
+	"github.com/vkodev/filer/backends/local"
+	"github.com/vkodev/filer/backends/sqlite3"
+	"github.com/vkodev/filer/common"
 	"log"
 )
 
@@ -30,9 +33,9 @@ func main() {
 	}
 	defer db.Close()
 
-	metadata := MakeSqliteMetadata(db)
-	storage := MakeLocalStorage("")
-	repository := MakeNewFileRepository(storage, metadata)
+	metadata := sqlite3.MakeSqliteMetadata(db)
+	storage := local.MakeLocalStorage("")
+	repository := common.MakeNewFileRepository(storage, metadata)
 
 	e := echo.New()
 	e.SetDebug(true)
@@ -40,6 +43,6 @@ func main() {
 	e.Use(middleware.Recover())
 
 	e.Get("/", version())
-	e.Post("/upload", uploadFile(repository))
+	e.Post("/upload", common.UploadFileHandler(repository))
 	e.Run(standard.New(":1234"))
 }
