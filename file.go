@@ -21,8 +21,8 @@ type File struct {
 	Size             int
 	URL              string
 	ImageInfo        *ImageInfo
-	provider	string
-	path		string
+	provider         string
+	path             string
 }
 
 // ImageInfo information
@@ -37,21 +37,22 @@ type ImageInfo struct {
 //FileRepository provides api to work with files
 type FileRepository struct {
 	metadata MetadataBackend
-	storage FileBackend
+	storage  FileBackend
 }
 
 //MakeNewFileRepository returns the new instance of FileRepository
 func MakeNewFileRepository(storage FileBackend, metadata MetadataBackend) *FileRepository {
-	return &FileRepository{metadata:metadata, storage:storage}
+	return &FileRepository{metadata: metadata, storage: storage}
 }
+
 //Upload tries to upload the file and saves it to the backend
 func (f *FileRepository) Upload(source io.ReadCloser, filename string) (*File, error) {
 	model := MakeNewFile(filename)
-	if err:=f.storage.Write(source, model); err!=nil {
+	if err := f.storage.Write(source, model); err != nil {
 		return model, err
 	}
 
-	if err := f.metadata.Insert(model); err!=nil {
+	if err := f.metadata.Insert(model); err != nil {
 		return model, err
 	}
 
@@ -69,6 +70,7 @@ type FileBackend interface {
 	//URL tries to get an url to the file
 	URL(*File) (string, error)
 }
+
 // MetadataBackend is a common interface for files metadata storage
 type MetadataBackend interface {
 	//Insert tries to insert a new file metadata
@@ -120,7 +122,7 @@ func uploadFile(fileRepository *FileRepository) echo.HandlerFunc {
 
 		f, err := fileRepository.Upload(src, filename)
 
-		if err!=nil {
+		if err != nil {
 			return err
 		}
 

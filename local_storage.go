@@ -25,8 +25,8 @@ func MakeLocalStorage(root string) *LocalStorage {
 func (s *LocalStorage) Write(f io.ReadCloser, file *File) error {
 	file.provider = s.Name
 	path := makePath(s.Root, file.UUID, file.Ext())
-	if err := os.MkdirAll(filepath.Dir(path), 0777); err!=nil {
-		return err;
+	if err := os.MkdirAll(filepath.Dir(path), 0777); err != nil {
+		return err
 	}
 	dst, err := os.Create(path)
 	if err != nil {
@@ -52,7 +52,7 @@ func (s *LocalStorage) Remove(file *File) error {
 }
 
 //URL returns an url to the file
-func (s *LocalStorage) URL(file *File) (string, error){
+func (s *LocalStorage) URL(file *File) (string, error) {
 	return "", nil
 }
 
@@ -63,6 +63,6 @@ func makePath(root string, uuid string, ext string) (path string) {
 	if root != "" {
 		root, _ = filepath.Abs(root)
 	}
-	path = filepath.Join(root, filepath.Join(parts...),"original") + ext
+	path = filepath.Join(root, filepath.Join(parts...), "original") + ext
 	return
 }

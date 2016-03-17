@@ -1,12 +1,12 @@
 package main
 
 import (
+	"database/sql"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/engine/standard"
 	"github.com/labstack/echo/middleware"
-	"database/sql"
 	_ "github.com/mattn/go-sqlite3"
-"log"
+	"log"
 )
 
 type versionType struct {
@@ -23,11 +23,9 @@ func version() echo.HandlerFunc {
 	}
 }
 
-
-
 func main() {
 	db, err := sql.Open("sqlite3", "./storage.db")
-	if err!=nil {
+	if err != nil {
 		log.Fatal(err)
 	}
 	defer db.Close()
