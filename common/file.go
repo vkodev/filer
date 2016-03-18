@@ -4,7 +4,10 @@ import (
 	"github.com/satori/go.uuid"
 	"io"
 	"path/filepath"
+	"regexp"
 )
+
+const ImageFormatRegex = "(?i)(jpeg|png|gif|tiff|bmp)"
 
 // File representation
 type File struct {
@@ -60,17 +63,20 @@ func (f *FileRepository) Upload(source io.ReadCloser, filename string) (*File, e
 
 // MakeNewFile make new File
 func MakeNewFile(filename string) *File {
-	return &File{UUID: uuid.NewV4().String(), OriginalFilename: filename, ImageInfo: &ImageInfo{}}
+	f := &File{UUID: uuid.NewV4().String(), OriginalFilename: filename, ImageInfo: &ImageInfo{}}
+	f.IsImage = IsImage(f.Ext())
+	return f
 }
 
 //Ext return file ext
 func (f *File) Ext() string {
-	if f.IsImage {
-		return f.ImageInfo.Format
-	}
-
 	if f.OriginalFilename != "" {
 		return filepath.Ext(f.OriginalFilename)
 	}
 	return filepath.Ext(f.OriginalFileURL)
+}
+
+func IsImage(ext string) bool {
+	matched, _ := regexp.MatchString(ImageFormatRegex, ext)
+	return matched
 }

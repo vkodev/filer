@@ -1,7 +1,7 @@
 package main
 
 import (
-	"database/sql"
+	"github.com/jinzhu/gorm"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/engine/standard"
 	"github.com/labstack/echo/middleware"
@@ -27,7 +27,7 @@ func version() echo.HandlerFunc {
 }
 
 func main() {
-	db, err := sql.Open("sqlite3", "./storage.db")
+	db, err := gorm.Open("sqlite3", "./storage.db")
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -3,6 +3,14 @@
 	"GoVersion": "go1.6",
 	"Deps": [
 		{
+			"ImportPath": "github.com/jinzhu/gorm",
+			"Rev": "55a8e63aada0a2b91b642f3ccaf635f464e674a8"
+		},
+		{
+			"ImportPath": "github.com/jinzhu/inflection",
+			"Rev": "3272df6c21d04180007eb3349844c89a3856bc25"
+		},
+		{
 			"ImportPath": "github.com/labstack/echo",
 			"Comment": "v2.0.0-beta.1-17-gb9ac79d",
 			"Rev": "b9ac79d9d49ebf2ac128cba81e44f80b2732ecf5"
@@ -24,6 +32,11 @@
 		{
 			"ImportPath": "github.com/mattn/go-isatty",
 			"Rev": "56b76bdf51f7708750eac80fa38b952bb9f32639"
+		},
+		{
+			"ImportPath": "github.com/mattn/go-sqlite3",
+			"Comment": "v1.1.0-27-g5651a9d",
+			"Rev": "5651a9d9d49ec25811d08220ee972080378d52ea"
 		},
 		{
 			"ImportPath": "github.com/satori/go.uuid",
