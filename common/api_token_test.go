@@ -1,4 +1,4 @@
-package models
+package common
 
 import (
 	"testing"
@@ -28,7 +28,7 @@ func TestCheckPass(t *testing.T) {
 func TestTokenGenerate(t *testing.T) {
 	token := NewApiToken(nil)
 
-	if (token.Token == "") {
+	if token.Token == "" {
 		t.Error("Token not generated nill or empty", token.Token)
 	}
 }
@@ -47,5 +47,3 @@ func TestTokenExpiry(t *testing.T) {
 	}
 
 }
-
-

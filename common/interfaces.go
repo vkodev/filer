@@ -1,6 +1,9 @@
 package common
 
-import "io"
+import (
+	"io"
+	"time"
+)
 
 // FileBackend is a common interface for files storage
 type FileBackend interface {
@@ -24,4 +27,30 @@ type MetadataBackend interface {
 	Delete(*File) error
 	//Query tries to get list of files metadata
 	Query(interface{}) ([]*File, error)
+}
+
+type ApiTokenRepository interface {
+	FindByToken(token string) (*ApiToken, error)
+
+	FindOneByUser(userId int) (*ApiToken, error)
+
+	Create(apiToken *ApiToken) error
+
+	UpdateExpiry(token string, expiry time.Time) error
+
+	Delete(token string) error
+}
+
+type ApiUserRepository interface {
+	FindById(id int) (*ApiUser, error)
+
+	FindByLogin(login string) (*ApiUser, error)
+
+	FindAll() ([]*ApiUser, error)
+
+	Create(apiUser *ApiUser) error
+
+	Update(apiUser *ApiUser) error
+
+	Delete(id int) error
 }

@@ -9,6 +9,7 @@ import (
 	"github.com/vkodev/filer/backends/local"
 	"github.com/vkodev/filer/backends/sqlite3"
 	"github.com/vkodev/filer/common"
+	"github.com/vkodev/filer/rest-api"
 	"log"
 )
 
@@ -37,6 +38,10 @@ func main() {
 	storage := local.MakeLocalStorage("")
 	repository := common.MakeNewFileRepository(storage, metadata)
 
+	// TODO: we need use better abstraction with choice from config, like if ... InitGormRepositories
+	tokenRepository := common.MakeApiTokenRepository(db)
+	userRepository := common.MakeApiUserGormRepository(db)
+
 	e := echo.New()
 	e.SetDebug(true)
 	e.Use(middleware.Logger())
@@ -44,5 +49,6 @@ func main() {
 
 	e.Get("/", version())
 	e.Post("/upload", common.UploadFileHandler(repository))
+	e.Post("/api/v1/auth", rest_api.HandleAuth(tokenRepository, userRepository))
 	e.Run(standard.New(":1234"))
 }
