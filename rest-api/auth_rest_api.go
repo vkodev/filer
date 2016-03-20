@@ -1,7 +1,7 @@
 package rest_api
 
 import (
-	"filer/models"
+	"github.com/vkodev/filer/models"
 	"github.com/labstack/echo"
 	"net/http"
 )
