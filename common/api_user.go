@@ -44,11 +44,14 @@ func HashPass(password string) (string, error) {
 }
 
 type ApiUserGormRepository struct {
-	DB gorm.DB
+	DB *gorm.DB
 }
 
 func MakeApiUserGormRepository(db *gorm.DB) ApiUserRepository {
 	db.AutoMigrate(&ApiUser{})
+
+	initUser, _ := NewApiUser("test", "123asd", true)
+	db.Create(initUser)
 
 	return &ApiUserGormRepository{DB:db}
 }
@@ -71,7 +74,7 @@ func (r *ApiUserGormRepository) FindByLogin(login string) (*ApiUser, error) {
 	return apiUser, nil
 }
 
-func (r *ApiUserGormRepository) FindAll() (apiUsers []*ApiUser, error) {
+func (r *ApiUserGormRepository) FindAll() (apiUsers []*ApiUser, err error) {
 	if err := r.DB.Find(apiUsers).Error; err != nil {
 		return nil, err
 	}

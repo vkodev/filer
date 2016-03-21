@@ -47,7 +47,7 @@ func GenToken() string {
 }
 
 type ApiTokenGormRepository struct {
-	DB gorm.DB
+	DB *gorm.DB
 }
 
 func MakeApiTokenRepository(db *gorm.DB) ApiTokenRepository {
@@ -91,7 +91,7 @@ func (r *ApiTokenGormRepository) Create(apiToken *ApiToken) error {
 func (r *ApiTokenGormRepository) UpdateExpiry(token string, expiry time.Time) error {
 	tx := r.DB.Begin()
 
-	if err := tx.Model(&ApiToken{Token: token}).Update("ExpiryAt", expiry); err != nil {
+	if err := tx.Model(&ApiToken{Token: token}).Update("ExpiryAt", expiry).Error; err != nil {
 		tx.Rollback()
 		return err
 	}
@@ -103,7 +103,7 @@ func (r *ApiTokenGormRepository) UpdateExpiry(token string, expiry time.Time) er
 func (r *ApiTokenGormRepository) Delete(token string) error {
 	tx := r.DB.Begin()
 
-	if err := tx.Delete(&ApiToken{Token: token}); err != nil {
+	if err := tx.Delete(&ApiToken{Token: token}).Error; err != nil {
 		tx.Rollback()
 		return err
 	}
